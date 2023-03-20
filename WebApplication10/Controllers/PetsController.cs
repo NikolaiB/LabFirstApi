@@ -19,7 +19,6 @@ namespace WebApplication10.Controllers
         }
        
         [HttpGet]
-       
         public IEnumerable<Pet> Get()
         {
             return _context.Pets.ToList();
