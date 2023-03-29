@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.VisualBasic;
 using WebApplication10.Data;
 using WebApplication10.Models;
+using WebApplication12.NewFolder;
 
 namespace WebApplication10.Controllers
 {
@@ -11,17 +12,17 @@ namespace WebApplication10.Controllers
     public class PetsController : Controller
     {
         // GET: PetsController
-        private readonly ApiPetContext _context;
-        public PetsController(ApiPetContext context)
-        {
-            _context = context;
+        private readonly IPetService _service;
 
+        public PetsController(IPetService service)
+        {
+            _service = service;
         }
-       
+
         [HttpGet]
         public IEnumerable<Pet> Get()
         {
-            return _context.Pets.ToList();
+            return _service.GetAllPets();
         }
 
         [HttpPost]
@@ -35,25 +36,25 @@ namespace WebApplication10.Controllers
                 PetType = viewModel.PetType,
 
             };
-            _context.Pets.Add(pet);
-            _context.SaveChanges(); 
+            _service.AddPet(pet);
 
-            return _context.Pets.ToList();
+
+            return _service.GetAllPets();
         }
 
         [HttpPut]
         [Route("{petid:guid}")]
         public IActionResult Put([FromRoute] Guid petid, AddPetViewModel viewModel)
         {
-            var pet = _context.Pets.Find(petid);
+            var pet = _service.GetPet(petid);
             if (pet != null)
             {
                 pet.PetName = viewModel.PetName;
                 pet.PetWeight = viewModel.PetWeight;
                 pet.PetType = viewModel.PetType;
 
-                _context.SaveChanges();
-                return Ok(_context.Pets.ToList());
+                
+                return Ok(_service.GetAllPets());
 
             }
             return NotFound();
@@ -63,7 +64,7 @@ namespace WebApplication10.Controllers
         [Route("{petid:guid}")]
         public IActionResult GetPet([FromRoute] Guid petid)
         {
-            var pet = _context.Pets.Find(petid);
+            var pet = _service.GetPet(petid);
             if (pet != null)
             {
                
@@ -77,14 +78,13 @@ namespace WebApplication10.Controllers
         [Route("{petid:guid}")]
         public IActionResult Delete([FromRoute] Guid petid)
         {
-            var pet = _context.Pets.Find(petid);
+            var pet = _service.GetPet(petid);
 
             if (pet != null)
             {
-                _context.Pets.Remove(pet);
-                _context.SaveChanges();
+                _service.DeletePet(petid);
 
-                return Ok(_context.Pets.ToList());
+                return Ok(_service.GetAllPets());
 
             }
             return NotFound();

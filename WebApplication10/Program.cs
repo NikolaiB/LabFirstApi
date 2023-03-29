@@ -1,6 +1,7 @@
 
 using Microsoft.EntityFrameworkCore;
 using WebApplication10.Data;
+using WebApplication12.NewFolder;
 
 namespace WebApplication10
 {
@@ -15,6 +16,7 @@ namespace WebApplication10
             builder.Services.AddControllers();
             builder.Services.AddDbContext<ApiPetContext>(options => options.UseInMemoryDatabase("PetDb"));
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+            builder.Services.AddSingleton<IPetService, PetService>();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
